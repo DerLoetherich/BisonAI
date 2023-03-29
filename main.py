@@ -1,9 +1,12 @@
 import Game as gm
 import MonteCarlo as mc
 
-root = mc.create_node(gm.starting_board(), 'B')
-for i in range(100):
-    mc.run_mcts_iteration(root, gm.starting_board())
-    i += 1
+root = {
+    "board": gm.starting_board(),
+    "player": True,  # True represents the Bisons player, False represents the Dogs/Indian player
+    "num_visits": 0,
+    "total_reward": 0,
+    "children": [],
+}
 
-print(mc.select_best_move(root))
+print(mc.run_mcts(root, root['player'], 1000))

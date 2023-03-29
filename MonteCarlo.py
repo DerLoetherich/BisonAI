@@ -4,22 +4,13 @@ import math
 import copy
 
 C=1.41 # Exploration constant
-EPSILON = 1e-8 
-MAX_TERM = 1e100
+
+
 
 def get_random_move(board, player):
     possible_moves = gm.possible_moves_bison(board) if player == True else gm.possible_moves_dog_and_indian(board)
     move = random.choice(possible_moves)
     return move
-
-def get_reward(board, player):
-    winner, _ = gm.game_over(board)
-    if winner is None:
-        return 0
-    elif winner == 'B' and not player or winner == 'W' and player:
-        return -1
-    else:
-        return 1
 
 def simulate_random_game(board, player):
     while not gm.game_over(board)[0]:
@@ -50,7 +41,7 @@ def ucb1_select_child(node):
 
 
 def get_reward(board, player):
-    winner = gm.check_winner(board)
+    _, winner = gm.game_over(board)
     if winner == player:
         return 1
     else:
@@ -76,7 +67,7 @@ def run_mcts_iteration(root, player):
     if unexplored_moves:
         # Choose a random unexplored move
         move = random.choice(unexplored_moves)
-        new_board = gm.move_piece(move[0], move[1], node["board"])
+        new_board = gm.move_piece(move, node["board"])
         new_node = {
             "board": new_board,
             "player": -player,
@@ -96,7 +87,19 @@ def run_mcts_iteration(root, player):
         child["num_visits"] += 1
         child["total_reward"] += reward * (1 if child["player"] == player else -1)
 
-
-
-        
-print(simulate_random_game(gm.starting_board(), True))
+def run_mcts(root, player, max_iterations):
+    """
+    Runs the Monte Carlo Tree Search algorithm starting from the root node.
+    """
+    for i in range(max_iterations):
+        run_mcts_iteration(root, player)
+    
+    # Choose the best move based on the number of visits to each child node
+    best_move = None
+    most_visits = -1
+    for child in root["children"]:
+        if child["num_visits"] > most_visits:
+            best_move = child["move"]
+            most_visits = child["num_visits"]
+    
+    return best_move
