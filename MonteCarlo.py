@@ -18,24 +18,27 @@ def simulate_random_game(board, player):
         board = gm.move_piece(move, board)
         player = not player
     _, winner = gm.game_over(board)
-    if winner == 'B':
+    if winner == True:
         return 1 if player else -1
-    elif winner == 'I':
+    elif winner == False:
         return 1 if not player else -1
     
 
 def ucb1_select_child(node):
-    """
-    Selects a child node based on the UCB1 formula.
-    """
-    best_score = -1
+    best_score = -float("inf")
     best_child = None
     for child in node["children"]:
-        exploitation_term = child["total_reward"] / child["num_visits"]
-        exploration_term = math.sqrt(2 * math.log(node["num_visits"]) / child["num_visits"])
-        ucb1_score = exploitation_term + exploration_term
-        if ucb1_score > best_score:
-            best_score = ucb1_score
+        if child["num_visits"] == 0:
+            return child
+        if child["num_visits"] <= 1:
+            exploration_term = float("inf")
+        if node["num_visits"] == 0:
+            exploration_term = float("inf")
+        else:
+            exploration_term = math.sqrt(2 * math.log(node["num_visits"]) / (child["num_visits"]))
+        score = (child["total_reward"] / child["num_visits"]) + exploration_term
+        if score > best_score:
+            best_score = score
             best_child = child
     return best_child
 
@@ -70,10 +73,11 @@ def run_mcts_iteration(root, player):
         new_board = gm.move_piece(move, node["board"])
         new_node = {
             "board": new_board,
-            "player": -player,
+            "player": not player,
             "num_visits": 0,
             "total_reward": 0,
             "children": [],
+            "move": move
         }
         node["children"].append(new_node)
         path.append((node, new_node))

@@ -1,5 +1,6 @@
 import Game as gm
 import MonteCarlo as mc
+import math
 
 root = {
     "board": gm.starting_board(),
@@ -7,6 +8,8 @@ root = {
     "num_visits": 0,
     "total_reward": 0,
     "children": [],
+    "move": None,  # The root node has no move
 }
+
 
 print(mc.run_mcts(root, root['player'], 1000))
