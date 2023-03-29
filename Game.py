@@ -123,9 +123,9 @@ def move_piece(move, board):
     return board
 
 def possible_moves(board, player):
-    if player == 'B':
+    if player == True:
         return possible_moves_bison(board)
-    elif player == 'I':
+    elif player == False:
         return possible_moves_dog_and_indian(board)
     else:
         raise ValueError('Invalid player')
@@ -135,16 +135,16 @@ def game_over(board):
     val = (False, None)
     for f in board[6]:
         if f == 'B':
-            return (True, 'B')
+            return (True, True)
     if not bison_moves:
-        val = (True, 'I')
+        val = (True, False)
     return val
 
 def other_player(player):
-    if player == 'B':
-        return 'I'
-    elif player == 'I':
-        return 'B'
+    if player == True:
+        return False
+    elif player == False:
+        return True
     else:
         raise ValueError('Invalid player')
         
