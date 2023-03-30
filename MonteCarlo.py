@@ -70,7 +70,8 @@ def run_mcts_iteration(root, player):
     if unexplored_moves:
         # Choose a random unexplored move
         move = random.choice(unexplored_moves)
-        new_board = gm.move_piece(move, node["board"])
+        copy_board = copy.deepcopy(node["board"])
+        new_board = gm.move_piece(move, copy_board)
         new_node = {
             "board": new_board,
             "player": not player,
