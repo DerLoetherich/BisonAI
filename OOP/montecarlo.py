@@ -1,10 +1,11 @@
 import game as gm
 import random
 import time
+import copy
 from math import log,sqrt,e,inf
 
 class Node:
-    def __init__(self, state = gm.Game()):
+    def __init__(self, state = gm.Game(), move = None):
         self.state = state
         self.children = []
         self.parent = None
@@ -19,9 +20,11 @@ def ucb1(curr_node):
 def expand(node):
     moves = node.state.possible_moves()
     for move in moves:
-        child_state = node.state.make_move(move)
-        child_node = Node(gm.Game(child_state, not node.state.currentPlayer))
+        child_state = copy.deepcopy(node.state)
+        child_state.make_move(move)
+        child_node = Node(child_state)
         child_node.parent = node
+        child_node.num_parentVisit = node.num_visit
         node.children.append(child_node)
 
 def select(node):
@@ -49,6 +52,7 @@ def playout(node):
         # select a random child node
         curr_node = random.choice(curr_node.children)
     result = curr_node.state.get_result()
+    print(result)
     return result
 
 def backpropagation(node, result):
@@ -58,6 +62,9 @@ def backpropagation(node, result):
         curr_node.exploitation_v += result
         curr_node = curr_node.parent
 
+
+# NICHT DAS MEISTEBSUCHTE KIND, SONDERN DAS KIND MIT JEWEILS HÖCHSTEM EXPLOITATION WERT
+# FÜR DEN JEWEILIGEN SPIELER MUSS GEWÄHLT WERDEN
 def monte_carlo_tree_search(root, time_limit):
     start_time = time.time()
     while time.time() - start_time < time_limit:

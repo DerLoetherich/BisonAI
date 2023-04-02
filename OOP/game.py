@@ -8,7 +8,8 @@ class Game:
                     [None, None, None, None, None, None, None, None, None, None, None],
                     [None, None, None, 'D', 'D', 'I', 'D', 'D', None, None, None],
                     [None, None, None, None, None, None, None, None, None, None, None]],
-                  currentPlayer = True):
+                  currentPlayer = True,
+                  last_move = None):
         self.board = board
         self.currentPlayer = currentPlayer
 
@@ -86,7 +87,7 @@ class Game:
                     # Check vertical moves
                     if i-1 >= 0 and self.board[i-1][j] in [None, 'B']:
                         possible_moves.append(((i, j), (i-1, j)))
-                    if i+1 < len(self.board) and self.board[i+1][j] in [None, 'B']:
+                    if i+1 < len(self.board)-1 and self.board[i+1][j] in [None, 'B']:
                         possible_moves.append(((i, j), (i+1, j)))
                     # Check horizontal moves
                     if j-1 >= 0 and self.board[i][j-1] in [None, 'B']:
@@ -98,9 +99,9 @@ class Game:
                         possible_moves.append(((i, j), (i-1, j-1)))
                     if i-1 >= 0 and j+1 < len(self.board[0]) and self.board[i-1][j+1] in [None, 'B']:
                         possible_moves.append(((i, j), (i-1, j+1)))
-                    if i+1 < len(self.board) and j-1 >= 0 and self.board[i+1][j-1] in [None, 'B']:
+                    if i+1 < len(self.board)-1 and j-1 >= 0 and self.board[i+1][j-1] in [None, 'B']:
                         possible_moves.append(((i, j), (i+1, j-1)))
-                    if i+1 < len(self.board) and j+1 < len(self.board[0]) and self.board[i+1][j+1] in [None, 'B']:
+                    if i+1 < len(self.board)-1 and j+1 < len(self.board[0]) and self.board[i+1][j+1] in [None, 'B']:
                         possible_moves.append(((i, j), (i+1, j+1)))
         return possible_moves
 
@@ -123,6 +124,8 @@ class Game:
         piece_type = self.board[move[0][0]][move[0][1]]
         self.board[move[0][0]][move[0][1]] = None
         self.board[move[1][0]][move[1][1]] = piece_type
+        self.last_move = move
+        self.currentPlayer = not self.currentPlayer
         return self.board
     
     def is_game_over(self):
@@ -146,7 +149,6 @@ class Game:
 
     
     def display_board(self):
-        print("   0 1 2 3 4 5 6 7 8 9 10 11")
         print("   -----------------------")
         for row in range(7):
             print(row, end=" |")
