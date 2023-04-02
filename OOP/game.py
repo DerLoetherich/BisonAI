@@ -112,9 +112,9 @@ class Game:
     
     def possible_moves(self):
         if self.currentPlayer == True:
-            return self.possible_moves_bison()
+            return self._possible_moves_bison()
         elif self.currentPlayer == False:
-            return self.possible_moves_dog_and_indian()
+            return self._possible_moves_dog_and_indian()
         else:
             raise ValueError('Invalid player')
     
@@ -125,7 +125,7 @@ class Game:
         self.board[move[1][0]][move[1][1]] = piece_type
         return self.board
     
-    def game_over(self):
+    def is_game_over(self):
         bison_moves = self._possible_moves_bison()
         val = False
         for f in self.board[6]:
@@ -135,8 +135,8 @@ class Game:
             val = True
         return val
     
-    def result(self):
-        if self.game_over():
+    def get_result(self):
+        if self.is_game_over():
             bison_moves = self._possible_moves_bison()
             for f in self.board[6]:
                 if f == 'B':
