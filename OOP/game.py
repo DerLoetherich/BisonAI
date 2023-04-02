@@ -1,25 +1,15 @@
-class Bison:
-    def __init__(self) -> None:
-        pass
-
-class Dog:
-    def __init__(self) -> None:
-        pass
-
-class Indian:
-    def __init__(self) -> None:
-        pass
-
 class Game:
-    def __init__(self, currentPlayer = True):
-        self.board = [
-        ['B', 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B'],
-        [None, None, None, None, None, None, None, None, None, None, None],
-        [None, None, None, None, None, None, None, None, None, None, None],
-        [None, None, None, None, None, None, None, None, None, None, None],
-        [None, None, None, None, None, None, None, None, None, None, None],
-        [None, None, None, 'D', 'D', 'I', 'D', 'D', None, None, None],
-        [None, None, None, None, None, None, None, None, None, None, None]]
+    def __init__(self,
+                  board = [
+                    ['B', 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B'],
+                    [None, None, None, None, None, None, None, None, None, None, None],
+                    [None, None, None, None, None, None, None, None, None, None, None],
+                    [None, None, None, None, None, None, None, None, None, None, None],
+                    [None, None, None, None, None, None, None, None, None, None, None],
+                    [None, None, None, 'D', 'D', 'I', 'D', 'D', None, None, None],
+                    [None, None, None, None, None, None, None, None, None, None, None]],
+                  currentPlayer = True):
+        self.board = board
         self.currentPlayer = currentPlayer
 
     def _possible_moves_dog(self):
@@ -128,7 +118,7 @@ class Game:
         else:
             raise ValueError('Invalid player')
     
-    def move_piece(self, move):
+    def make_move(self, move):
         # Move the piece
         piece_type = self.board[move[0][0]][move[0][1]]
         self.board[move[0][0]][move[0][1]] = None
@@ -136,19 +126,26 @@ class Game:
         return self.board
     
     def game_over(self):
-        # This function will return if the game has ended and which player won the game.
-        # The first value in the tuple refers to whether the game has ended or not.
-        # The second value in the tuple refers to which player has won the game.
         bison_moves = self._possible_moves_bison()
-        val = (False, None)
+        val = False
         for f in self.board[6]:
             if f == 'B':
-                return (True, True)
+                return True
         if not bison_moves:
-            val = (True, False)
+            val = True
         return val
     
-    def print_board(self):
+    def result(self):
+        if self.game_over():
+            bison_moves = self._possible_moves_bison()
+            for f in self.board[6]:
+                if f == 'B':
+                    return True
+                else:
+                    return False
+
+    
+    def display_board(self):
         print("   0 1 2 3 4 5 6 7 8 9 10 11")
         print("   -----------------------")
         for row in range(7):
