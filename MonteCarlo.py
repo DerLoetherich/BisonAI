@@ -15,7 +15,8 @@ def get_random_move(board, player):
 def simulate_random_game(board, player):
     while not gm.game_over(board)[0]:
         move = get_random_move(board, player)
-        board = gm.move_piece(move, board)
+        copy_board = copy.deepcopy(board)
+        board = gm.move_piece(move, copy_board)
         player = not player
     _, winner = gm.game_over(board)
     if winner == True:
@@ -78,6 +79,7 @@ def run_mcts_iteration(root, player):
             "num_visits": 0,
             "total_reward": 0,
             "children": [],
+            "parent": node,
             "move": move
         }
         node["children"].append(new_node)
@@ -85,7 +87,9 @@ def run_mcts_iteration(root, player):
         node = new_node
 
     # Simulate a game from the newly added node
-    reward = get_reward(node["board"], player)
+    if not unexplored_moves:
+        node = random.choice(node["children"])  # Choose a random child node to simulate
+    reward = simulate_random_game(node['board'], player)
 
     # Update the statistics for all nodes in the path
     for parent, child in path:

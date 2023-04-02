@@ -9,6 +9,7 @@ root = {
     "num_visits": 0,
     "total_reward": 0,
     "children": [],
+    "parent": None,
     "move": None,  # The root node has no move
 }
 

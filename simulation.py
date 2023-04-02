@@ -17,12 +17,13 @@ def play_game():
             "children": [],
             "move": None
         }
-        for i in range(1000):
+        for i in range(2000):
             mc.run_mcts_iteration(root, player)
 
         # Select the best move according to the MCTS results
         best_child = mc.ucb1_select_child(root)
         best_move = best_child["move"]
+        print(best_move)
         
         # Make the selected move
         gm.print_board(board)
@@ -37,3 +38,16 @@ def play_game():
         print("Dogs/Indian player wins!")
     else:
         print("The game ended in a tie.")
+
+
+
+def winning_board():
+    return [
+    [None, None, None, None, None, None, None, None, None, None, None],
+    [None, None, None, None, None, None, None, None, None, None, None],
+    [None, None, None, None, None, None, None, None, None, None, None],
+    [None, 'D', None, 'D', None, None, None, None, None, None, None],
+    [None, None, None, None, None, None, None, None, 'D', None, None],
+    [None, None, 'I', None, None, None, 'D', None, None, None, None],
+    [None, None, None, None, None, None, None, None, None, None, None],
+    ]
