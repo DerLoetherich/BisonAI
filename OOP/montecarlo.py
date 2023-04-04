@@ -4,7 +4,7 @@ import time
 import copy
 from math import log,sqrt,e,inf
 
-C = 2.1 # Exploration Weight
+C = sqrt(2) # Exploration Weight
 
 class Node:
     def __init__(self, state = gm.Game(), move = None):
@@ -85,13 +85,11 @@ def backpropagation(node, result):
         curr_node = curr_node.parent
 
 
-# NICHT DAS MEISTEBSUCHTE KIND, SONDERN DAS KIND MIT JEWEILS HÖCHSTEM EXPLOITATION WERT
-# FÜR DEN JEWEILIGEN SPIELER MUSS GEWÄHLT WERDEN
 def monte_carlo_tree_search(root, time_limit):
     start_time = time.time()
     while time.time() - start_time < time_limit:
         node = select(root)
         result = playout(node)
         backpropagation(node, result)
-    best_child = max(root.children, key=lambda child: uct(child))
+    best_child = max(root.children, key=lambda child: (child.total_reward/child.num_visit))
     return best_child
