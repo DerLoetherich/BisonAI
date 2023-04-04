@@ -6,7 +6,7 @@ class Game:
                     [None, None, None, None, None, None, None, None, None, None, None],
                     [None, None, None, None, None, None, None, None, None, None, None],
                     [None, None, None, None, None, None, None, None, None, None, None],
-                    [None, None, None, 'D', 'D', 'I', 'D', 'D', None, None, None],
+                    [None, 'D', 'D', 'D', 'D', 'I', 'D', 'D', 'D', 'D', None],
                     [None, None, None, None, None, None, None, None, None, None, None]],
                   currentPlayer = True,
                   last_move = None):
@@ -143,9 +143,9 @@ class Game:
             bison_moves = self._possible_moves_bison()
             for f in self.board[6]:
                 if f == 'B':
-                    return True
+                    return +1
                 else:
-                    return False
+                    return -1
 
     
     def display_board(self):

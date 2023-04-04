@@ -4,6 +4,8 @@ import time
 import copy
 from math import log,sqrt,e,inf
 
+C = 1.41 # Exploration Weight
+
 class Node:
     def __init__(self, state = gm.Game(), move = None):
         self.state = state
@@ -11,11 +13,27 @@ class Node:
         self.parent = None
         self.num_parentVisit = 0
         self.num_visit = 0
-        self.exploitation_v = 0
+        self.exploitation_value = 0
+        self.total_reward = 0
 
-def ucb1(curr_node):
+def old_ucb1(curr_node):
     result = curr_node.exploitation_v+2*(sqrt(log(curr_node.num_parentVisit+e+(10e-6))/(curr_node.num_visit+(10e-10))))
     return result
+
+
+def ucb1(curr_node):
+    if curr_node.num_visit == 0:
+        return float('inf')  # if node has not been visited, return infinity to encourage its selection
+    if curr_node.state.currentPlayer == True:
+        exploitation_value = curr_node.total_reward / curr_node.num_visit
+        exploration_value = C * sqrt(log(curr_node.parent.num_visit+(10e-6)) / (curr_node.num_visit+(10e-10)))
+        uct_value = exploitation_value + exploration_value
+    else:
+        exploitation_value = -1*(curr_node.total_reward) / curr_node.num_visit
+        exploration_value = C * sqrt(log(curr_node.parent.num_visit+(10e-6)) / (curr_node.num_visit+(10e-10)))
+        uct_value = exploitation_value + exploration_value  
+    return uct_value
+
 
 def expand(node):
     moves = node.state.possible_moves()
@@ -52,14 +70,13 @@ def playout(node):
         # select a random child node
         curr_node = random.choice(curr_node.children)
     result = curr_node.state.get_result()
-    print(result)
     return result
 
 def backpropagation(node, result):
     curr_node = node
     while curr_node is not None:
         curr_node.num_visit += 1
-        curr_node.exploitation_v += result
+        curr_node.total_reward += result
         curr_node = curr_node.parent
 
 
@@ -71,5 +88,6 @@ def monte_carlo_tree_search(root, time_limit):
         node = select(root)
         result = playout(node)
         backpropagation(node, result)
-    best_child = max(root.children, key=lambda child: child.num_visit)
+    best_child = max(root.children, key=lambda child: ucb1(child))
+    print(ucb1(best_child))
     return best_child
