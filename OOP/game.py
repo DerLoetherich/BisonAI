@@ -6,7 +6,7 @@ class Game:
                     [None, None, None, None, None, None, None, None, None, None, None],
                     [None, None, None, None, None, None, None, None, None, None, None],
                     [None, None, None, None, None, None, None, None, None, None, None],
-                    [None, 'D', 'D', 'D', 'D', 'I', 'D', 'D', 'D', 'D', None],
+                    [None, 'I', 'I', 'I', 'I', 'I', 'I', 'I', 'I', 'I', None],
                     [None, None, None, None, None, None, None, None, None, None, None]],
                   currentPlayer = True,
                   last_move = None):

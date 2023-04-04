@@ -4,7 +4,7 @@ import time
 import copy
 from math import log,sqrt,e,inf
 
-C = 1.41 # Exploration Weight
+C = 2.1 # Exploration Weight
 
 class Node:
     def __init__(self, state = gm.Game(), move = None):
@@ -16,12 +16,7 @@ class Node:
         self.exploitation_value = 0
         self.total_reward = 0
 
-def old_ucb1(curr_node):
-    result = curr_node.exploitation_v+2*(sqrt(log(curr_node.num_parentVisit+e+(10e-6))/(curr_node.num_visit+(10e-10))))
-    return result
-
-
-def ucb1(curr_node):
+def uct(curr_node):
     if curr_node.num_visit == 0:
         return float('inf')  # if node has not been visited, return infinity to encourage its selection
     if curr_node.state.currentPlayer == True:
@@ -53,24 +48,34 @@ def select(node):
             # select a random child node
             node = random.choice(node.children)
         else:
-            # select the child node with the highest UCB1 value
-            ucb1_values = [ucb1(child_node) for child_node in node.children]
-            max_ucb1_value = max(ucb1_values)
-            max_ucb1_index = ucb1_values.index(max_ucb1_value)
-            node = node.children[max_ucb1_index]
+            # select the child node with the highest uct value
+            uct_values = [uct(child_node) for child_node in node.children]
+            max_uct_value = max(uct_values)
+            max_uct_index = uct_values.index(max_uct_value)
+            node = node.children[max_uct_index]
     
     return node  # return a random child node if the current node is terminal
 
 def playout(node):
     curr_node = node
     while not curr_node.state.is_game_over():
-        # expand the current node if it has not been explored yet
         if not curr_node.children:
+            # if the node has no children, it means it has not been explored yet, so expand it
             expand(curr_node)
-        # select a random child node
-        curr_node = random.choice(curr_node.children)
+            # select a random child node to explore
+            curr_node = random.choice(curr_node.children)
+        else:
+            # select the child node with the highest UCT value
+            uct_values = [uct(child_node) for child_node in curr_node.children]
+            max_uct_value = max(uct_values)
+            max_uct_index = uct_values.index(max_uct_value)
+            curr_node = curr_node.children[max_uct_index]
+        # increment the visit count of the selected child node
+        curr_node.num_visit += 1
+        
     result = curr_node.state.get_result()
     return result
+
 
 def backpropagation(node, result):
     curr_node = node
@@ -88,6 +93,5 @@ def monte_carlo_tree_search(root, time_limit):
         node = select(root)
         result = playout(node)
         backpropagation(node, result)
-    best_child = max(root.children, key=lambda child: ucb1(child))
-    print(ucb1(best_child))
+    best_child = max(root.children, key=lambda child: uct(child))
     return best_child
