@@ -86,11 +86,14 @@ def backpropagation(node, result):
 
 
 def monte_carlo_tree_search(root, num_iterations):
-    c = 0
-    while c < num_iterations:
+    start_time = time.time()
+    for i in range(num_iterations+1):
         node = select(root)
         result = playout(node)
         backpropagation(node, result)
-        c += 1
+        if i % 100 == 0:
+            print(i)
     best_child = max(root.children, key=lambda child: (child.total_reward/child.num_visit))
+    print("Duration:")
+    print(time.time() - start_time)
     return best_child

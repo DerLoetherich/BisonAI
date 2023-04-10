@@ -6,7 +6,7 @@ def simulate_game():
     root = mc.Node(game)
 
     while not game.is_game_over():
-        best_child = mc.monte_carlo_tree_search(root, 1000)
+        best_child = mc.monte_carlo_tree_search(root, 5000)
         game.make_move(best_child.state.last_move)
         root = mc.Node(game)
         game.display_board()
