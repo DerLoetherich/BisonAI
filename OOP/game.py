@@ -1,13 +1,15 @@
+import numpy as np
+
 class Game:
     def __init__(self,
-                  board = [
-                    ['B', 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B'],
-                    [None, None, None, None, None, None, None, None, None, None, None],
-                    [None, None, None, None, None, None, None, None, None, None, None],
-                    [None, None, None, None, None, None, None, None, None, None, None],
-                    [None, None, None, None, None, None, None, None, None, None, None],
-                    [None, None,  None, 'D', 'D', 'I', 'D', 'D', None, None, None],
-                    [None, None, None, None, None, None, None, None, None, None, None]],
+                  board = np.array([
+                    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0,  0, 2, 2, 3, 2, 2, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]),
                   currentPlayer = True,
                   last_move = None):
         self.board = board
@@ -17,52 +19,52 @@ class Game:
         possible_moves = []
         for i in range(len(self.board)):
             for j in range(len(self.board[0])):
-                if self.board[i][j] == 'D':
+                if self.board[i][j] == 2:
                     # Check horizontal moves to the right
                     for c in range(j+1, len(self.board[0])):
-                        if self.board[i][c] is None:
+                        if self.board[i][c] is 0:
                             possible_moves.append(((i, j), (i, c)))
                         else:
                             break
                     # Check horizontal moves to the left
                     for c in range(j-1, -1, -1):
-                        if self.board[i][c] is None:
+                        if self.board[i][c] is 0:
                             possible_moves.append(((i, j), (i, c)))
                         else:
                             break
                     # Check vertical moves up
                     for r in range(i-1, 0, -1):
-                        if self.board[r][j] is None:
+                        if self.board[r][j] is 0:
                             possible_moves.append(((i, j), (r, j)))
                         else:
                             break
                     # Check vertical moves down
                     for r in range(i+1, len(self.board)-1):
-                        if self.board[r][j] is None:
+                        if self.board[r][j] is 0:
                             possible_moves.append(((i, j), (r, j)))
                         else:
                             break
                     # Check diagonal moves up-right
                     for r, c in zip(range(i-1, 0, -1), range(j+1, len(self.board[0]))):
-                        if self.board[r][c] is None:
+                        if self.board[r][c] is 0:
                             possible_moves.append(((i, j), (r, c)))
                         else:
                             break
                     # Check diagonal moves up-left
                     for r, c in zip(range(i-1, 0, -1), range(j-1, -1, -1)):
-                        if self.board[r][c] is None:
+                        if self.board[r][c] is 0:
                             possible_moves.append(((i, j), (r, c)))
                         else:
                             break
                     # Check diagonal moves down-right
                     for r, c in zip(range(i+1, len(self.board)-1), range(j+1, len(self.board[0]))):
-                        if self.board[r][c] is None:
+                        if self.board[r][c] is 0:
                             possible_moves.append(((i, j), (r, c)))
                         else:
                             break
                     # Check diagonal moves down-left
                     for r, c in zip(range(i+1, len(self.board)-1), range(j-1, -1, -1)):
-                        if self.board[r][c] is None:
+                        if self.board[r][c] is 0:
                             possible_moves.append(((i, j), (r, c)))
                         else:
                             break
@@ -74,7 +76,7 @@ class Game:
         possible_moves = []
         for i in range(len(self.board)-1):
             for j in range(len(self.board[0])):
-                if self.board[i][j] == 'B' and self.board[i+1][j] == None:
+                if self.board[i][j] == 1 and self.board[i+1][j] == 0:
                     possible_moves.append(((i, j), (i+1, j)))
         return possible_moves
 
@@ -83,25 +85,25 @@ class Game:
         possible_moves = []
         for i in range(len(self.board)):
             for j in range(len(self.board[0])):
-                if self.board[i][j] == 'I':
+                if self.board[i][j] == 3:
                     # Check vertical moves
-                    if i-1 >= 0 and self.board[i-1][j] in [None, 'B']:
+                    if i-1 >= 0 and self.board[i-1][j] in [0, 1]:
                         possible_moves.append(((i, j), (i-1, j)))
-                    if i+1 < len(self.board)-1 and self.board[i+1][j] in [None, 'B']:
+                    if i+1 < len(self.board)-1 and self.board[i+1][j] in [0, 1]:
                         possible_moves.append(((i, j), (i+1, j)))
                     # Check horizontal moves
-                    if j-1 >= 0 and self.board[i][j-1] in [None, 'B']:
+                    if j-1 >= 0 and self.board[i][j-1] in [0, 1]:
                         possible_moves.append(((i, j), (i, j-1)))
-                    if j+1 < len(self.board[0]) and self.board[i][j+1] in [None, 'B']:
+                    if j+1 < len(self.board[0]) and self.board[i][j+1] in [0, 1]:
                         possible_moves.append(((i, j), (i, j+1)))
                     # Check diagonal moves
-                    if i-1 >= 0 and j-1 >= 0 and self.board[i-1][j-1] in [None, 'B']:
+                    if i-1 >= 0 and j-1 >= 0 and self.board[i-1][j-1] in [0, 1]:
                         possible_moves.append(((i, j), (i-1, j-1)))
-                    if i-1 >= 0 and j+1 < len(self.board[0]) and self.board[i-1][j+1] in [None, 'B']:
+                    if i-1 >= 0 and j+1 < len(self.board[0]) and self.board[i-1][j+1] in [0, 1]:
                         possible_moves.append(((i, j), (i-1, j+1)))
-                    if i+1 < len(self.board)-1 and j-1 >= 0 and self.board[i+1][j-1] in [None, 'B']:
+                    if i+1 < len(self.board)-1 and j-1 >= 0 and self.board[i+1][j-1] in [0, 1]:
                         possible_moves.append(((i, j), (i+1, j-1)))
-                    if i+1 < len(self.board)-1 and j+1 < len(self.board[0]) and self.board[i+1][j+1] in [None, 'B']:
+                    if i+1 < len(self.board)-1 and j+1 < len(self.board[0]) and self.board[i+1][j+1] in [0, 1]:
                         possible_moves.append(((i, j), (i+1, j+1)))
         return possible_moves
 
@@ -122,7 +124,7 @@ class Game:
     def make_move(self, move):
         # Move the piece
         piece_type = self.board[move[0][0]][move[0][1]]
-        self.board[move[0][0]][move[0][1]] = None
+        self.board[move[0][0]][move[0][1]] = 0
         self.board[move[1][0]][move[1][1]] = piece_type
         self.last_move = move
         self.currentPlayer = not self.currentPlayer
@@ -132,7 +134,7 @@ class Game:
         bison_moves = self._possible_moves_bison()
         val = False
         for f in self.board[6]:
-            if f == 'B':
+            if f == 1:
                 return True
         if not bison_moves:
             val = True
@@ -142,7 +144,7 @@ class Game:
         if self.is_game_over():
             bison_moves = self._possible_moves_bison()
             for f in self.board[6]:
-                if f == 'B':
+                if f == 1:
                     return +1
                 else:
                     return -1
@@ -153,7 +155,7 @@ class Game:
         for row in range(7):
             print(row, end=" |")
             for col in range(11):
-                if self.board[row][col] is None:
+                if self.board[row][col] is 0:
                     print("  ", end="")
                 else:
                     print(f" {self.board[row][col]}", end="")
