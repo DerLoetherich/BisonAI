@@ -87,7 +87,7 @@ def backpropagation(node, result):
 
 def monte_carlo_tree_search(root, num_iterations):
     start_time = time.time()
-    for i in range(num_iterations+1):
+    for i in range(num_iterations):
         node = select(root)
         result = playout(node)
         backpropagation(node, result)
