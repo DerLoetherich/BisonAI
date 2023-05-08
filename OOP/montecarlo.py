@@ -91,9 +91,14 @@ def monte_carlo_tree_search(root, num_iterations):
         node = select(root)
         result = playout(node)
         backpropagation(node, result)
-        if i % 100 == 0:
+        if i % 1000 == 0:
             print(i)
-    best_child = max(root.children, key=lambda child: (child.total_reward/child.num_visit))
+    best_child = max(root.children, key=lambda child: (child.total_reward/(child.num_visit + 10e-10)))
     print("Duration:")
     print(time.time() - start_time)
     return best_child
+
+def print_attributes(object):
+    attributes = vars(object)
+    for attribute, value in attributes.items():
+        print(attribute, "=", value)

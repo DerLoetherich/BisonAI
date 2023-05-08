@@ -11,7 +11,8 @@ class Game:
                     [0, 0,  0, 2, 2, 3, 2, 2, 0, 0, 0],
                     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]),
                   currentPlayer = True,
-                  last_move = None):
+                  last_move = None,
+                  last_move_piece = None):
         self.board = board
         self.currentPlayer = currentPlayer
 
@@ -127,6 +128,7 @@ class Game:
         self.board[move[0][0]][move[0][1]] = 0
         self.board[move[1][0]][move[1][1]] = piece_type
         self.last_move = move
+        self.last_move_piece = piece_type
         self.currentPlayer = not self.currentPlayer
         return self.board
     
@@ -146,18 +148,30 @@ class Game:
             for f in self.board[6]:
                 if f == 1:
                     return +1
-                else:
+                elif not bison_moves:
                     return -1
+                else:
+                    return 0
 
     
     def display_board(self):
         print("   -----------------------")
-        for row in range(7):
+        for row in range(len(self.board)):
             print(row, end=" |")
-            for col in range(11):
+            for col in range(len(self.board[0])):
                 if self.board[row][col] == 0:
                     print("  ", end="")
                 else:
                     print(f" {self.board[row][col]}", end="")
             print(" |")
         print("   -----------------------")
+
+
+def winning_board():
+    return np.array([[1, 1, 1],
+                     [0, 0, 0],
+                     [0, 0, 0],
+                     [0, 0, 0],
+                     [0, 0, 0],
+                     [0, 3, 0],
+                     [0, 0, 0]])
