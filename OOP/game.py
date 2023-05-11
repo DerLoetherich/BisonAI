@@ -11,8 +11,8 @@ class Game:
                     [0, 0,  0, 2, 2, 3, 2, 2, 0, 0, 0],
                     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]),
                   currentPlayer = True,
-                  last_move = None,
-                  last_move_piece = None):
+                  last_move = None):
+        self.last_move = last_move
         self.board = board
         self.currentPlayer = currentPlayer
 
@@ -128,7 +128,6 @@ class Game:
         self.board[move[0][0]][move[0][1]] = 0
         self.board[move[1][0]][move[1][1]] = piece_type
         self.last_move = move
-        self.last_move_piece = piece_type
         self.currentPlayer = not self.currentPlayer
         return self.board
     
@@ -175,3 +174,12 @@ def winning_board():
                      [0, 0, 0],
                      [0, 3, 0],
                      [0, 0, 0]])
+
+def test_board():
+    return np.array([[0, 0, 0],
+                     [0, 0, 0],
+                     [0, 0, 0],
+                     [0, 0, 0],
+                     [0, 0, 0],
+                     [0, 3, 0],
+                     [1, 0, 0]])

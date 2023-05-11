@@ -1,20 +1,34 @@
 import game as gm
 import montecarlo as mc
+import copy
 
-def simulate_game():
-    game = gm.Game(gm.winning_board())
+def self_play(num_iterations):
+    # initialize game and root node
+    game = gm.Game(gm.winning_board(), False)
     root = mc.Node(game)
+    game.display_board()
 
     while not game.is_game_over():
-        best_child = mc.monte_carlo_tree_search(root, 15000)
+        best_child = mc.monte_carlo_tree_search(root, num_iterations)
         game.make_move(best_child.state.last_move)
-        root = mc.Node(game)
+        root = mc.Node(copy.deepcopy(game))
         game.display_board()
-    
+
     result = game.get_result()
     return result
 
-simulate_game()
+self_play(5000)
+
+#game = gm.Game(gm.winning_board(), False)
+#root = mc.Node(game)
+
+#best_child = mc.monte_carlo_tree_search(root, 2)
+#print(best_child.state.last_move)
+#game.display_board()
+
+
+
+
 
 """
 game = gm.Game()
