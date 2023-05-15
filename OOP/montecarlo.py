@@ -1,14 +1,16 @@
-import game as gm
+import bison as bn
 import random
 import time
 import copy
-from math import log,sqrt,e,inf
+from math import log,sqrt
 
 C = sqrt(2) # Exploration Weight
 
 class Node:
-    def __init__(self, state = gm.Game()):
+    def __init__(self, state = bn.board(), current_player = True, last_move = None):
         self.state = state
+        self.current_player = current_player
+        self.last_move = last_move
         self.children = []
         self.parent = None
         self.num_visit = 0
@@ -18,8 +20,8 @@ class Node:
         return len(self.get_unexplored_moves()) == 0
         
     def get_unexplored_moves(self):
-        explored_moves = [child.state.last_move for child in self.children]
-        all_moves = self.state.possible_moves()
+        explored_moves = [child.last_move for child in self.children]
+        all_moves = bn.possible_moves(self.state, self.current_player)
         unexplored_moves = [move for move in all_moves if move not in explored_moves]
         return unexplored_moves
         
@@ -28,12 +30,12 @@ class Node:
         node.parent = self
 
 
-def uct(curr_node):
-    if curr_node.num_visit == 0:
+def uct(node):
+    if node.num_visit == 0:
         return float('inf')  # if node has not been visited, return infinity to encourage its selection
      
-    exploitation_value = curr_node.total_reward / curr_node.num_visit
-    exploration_value = C * sqrt(log(curr_node.parent.num_visit+(10e-6)) / (curr_node.num_visit+(10e-10)))
+    exploitation_value = node.total_reward / node.num_visit
+    exploration_value = C * sqrt(log(node.parent.num_visit+(10e-6)) / (node.num_visit+(10e-10)))
     uct_value = exploitation_value + exploration_value
     return uct_value
 
@@ -41,13 +43,13 @@ def expand(node):
     unexplored_moves = node.get_unexplored_moves()
     move = random.choice(unexplored_moves)
     child_state = copy.deepcopy(node.state)
-    new_state = gm.Game(child_state.make_move(move))
-    new_node = Node(new_state)
-    node.add_child(new_node)
-    return new_node
+    new_state = bn.make_move(child_state, move)
+    new_child = Node(new_state, not node.current_player, move)
+    node.add_child(new_child)
+    return new_child
 
 def select(node):
-    while not node.state.is_game_over():
+    while not bn.is_game_over(node.state):
         if not node.is_fully_expanded():
             return expand(node)
         else:
@@ -57,10 +59,13 @@ def select(node):
     return node
 
 def rollout(node):
-    while not node.state.is_game_over():
-        move = random.choice(node.state.possible_moves())
-        node.state.make_move(move)
-    return node.state.get_result()
+    state = copy.deepcopy(node.state)
+    current_player = node.current_player
+    while not bn.is_game_over(state):
+        move = random.choice(bn.possible_moves(state, current_player))
+        state = bn.make_move(state, move)
+        current_player = not current_player
+    return bn.get_result(state)
 
 def backpropagation(node, result):
     while node is not None:
@@ -76,7 +81,10 @@ def monte_carlo_tree_search(root, num_iterations):
         backpropagation(node, result)
         if i % 1000 == 0:
             print(i)
-    best_child = max(root.children, key=lambda child: (child.total_reward/(child.num_visit + 10e-10)))
+    if root.current_player:
+        best_child = max(root.children, key=lambda child: (child.total_reward/(child.num_visit + 10e-10)))
+    else:
+        best_child = min(root.children, key=lambda child: (child.total_reward/(child.num_visit + 10e-10)))
     print("Duration:")
     print(time.time() - start_time)
     return best_child
