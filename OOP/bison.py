@@ -141,8 +141,6 @@ def get_result(board):
                 return +1
             elif not bison_moves:
                 return -1
-            else:
-                return 0
 
 
 def display_board(board):
@@ -159,19 +157,19 @@ def display_board(board):
 
 
 def winning_board():
+    return np.array([[1, 1, 1, 1, 1, 1, 1],
+                    [0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 2, 3, 2, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0]])
+
+def test_board():
     return np.array([[1, 1, 1],
                     [0, 0, 0],
                     [0, 0, 0],
                     [0, 0, 0],
                     [0, 0, 0],
                     [0, 3, 0],
-                    [0, 0, 0]])
-
-def test_board():
-    return np.array([[0, 0, 0],
-                    [0, 0, 0],
-                    [0, 0, 0],
-                    [0, 0, 0],
-                    [0, 0, 0],
-                    [1, 3, 0],
                     [0, 0, 0]])
