@@ -4,8 +4,8 @@ import copy
 
 def self_play(num_iterations):
     # initialize game and root node
-    root = mc.Node(bn.board())
-    display_state = bn.board()
+    root = mc.Node(bn.test_board())
+    display_state = bn.test_board()
     bn.display_board(root.state)
 
     while not bn.is_game_over(root.state):
@@ -17,4 +17,4 @@ def self_play(num_iterations):
     result = bn.get_result(root.state)
     return result
 
-self_play(20000)
+self_play(5000)
